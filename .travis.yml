@@ -1,0 +1,15 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t tejks/react-test ./client
+
+script:
+  - docker run -e CI=true tejks/react-test npm test
+
+after_success:
+  - docker build -t tejks/multi-client ./client
+  - docker build -t tejks/multi-nginx ./nginx
+  - docker build -t tejks/multi-server ./server
+  - docker build -t tejks/multi-worker ./worker

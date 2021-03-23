@@ -1,0 +1,47 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:11-alpine
+    restart: always
+    ports:
+      - 3000:5432
+    environment:
+      - POSTGRES_DB=docker
+      - POSTGRES_PASSWORD=system
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  redis:
+    image: 'redis:latest'
+  nginx:
+    depends_on:
+      - client
+      - api
+    restart: always
+    build: ./nginx
+    ports:
+      - '3050:80'
+  worker:
+    build: ./worker
+    volumes:
+      - /app/node_modules
+      - ./worker:/app
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+  client:
+    stdin_open: true
+    build: ./client
+    volumes:
+      - /app/node_modules
+      - ./client:/app
+  api:
+    build: ./server
+    depends_on:
+      - postgres
+    volumes:
+      - /app/node_modules
+      - ./server:/app
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - DATABASE_URL=postgresql://postgres:system@postgres/docker
