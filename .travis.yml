@@ -13,3 +13,10 @@ after_success:
   - docker build -t tejks/multi-nginx ./nginx
   - docker build -t tejks/multi-server ./server
   - docker build -t tejks/multi-worker ./worker
+
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+
+  - docker push tejks/multi-client
+  - docker push tejks/multi-nginx
+  - docker push tejks/multi-server
+  - docker push tejks/multi-worker
