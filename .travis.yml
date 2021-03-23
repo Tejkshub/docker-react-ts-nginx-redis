@@ -4,8 +4,8 @@ language: generic
 services:
   - docker
 
-before_install:
-  - docker build -t tejks/react-test ./client
+install:
+  - docker build -t tejks/react-test -f ./client/Dockerfile.dev ./client
 
 script:
   - docker run -e CI=true tejks/react-test npm test
