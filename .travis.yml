@@ -1,9 +1,11 @@
 sudo: required
+language: generic
+
 services:
   - docker
 
 before_install:
-  - docker build -t tejks/react-test ./client
+  - docker build -t tejks/react-test -f ./client/Dockerfile.dev ./client
 
 script:
   - docker run -e CI=true tejks/react-test npm test
@@ -13,9 +15,9 @@ after_success:
   - docker build -t tejks/multi-nginx ./nginx
   - docker build -t tejks/multi-server ./server
   - docker build -t tejks/multi-worker ./worker
-
+  # Log in to the docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-
+  # Take those images and push them to docker hub
   - docker push tejks/multi-client
   - docker push tejks/multi-nginx
   - docker push tejks/multi-server
