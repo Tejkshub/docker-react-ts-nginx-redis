@@ -4,7 +4,7 @@ language: generic
 services:
   - docker
 
-install:
+before_install:
   - docker build -t tejks/react-test -f ./client/Dockerfile.dev ./client
 
 script:
